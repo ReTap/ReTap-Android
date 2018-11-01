@@ -106,6 +106,10 @@ class VibrationInteractor(
         vibrateMorse(vibrations)
     }
 
+    fun stop() {
+        vibrator.cancel()
+    }
+
     private fun vibrateMorse(vibrationLongs: ArrayList<Long>) {
         val vibrations = LongArray(vibrationLongs.size)
         val morseVibrations = StringBuffer("Vibrating Morse: ")

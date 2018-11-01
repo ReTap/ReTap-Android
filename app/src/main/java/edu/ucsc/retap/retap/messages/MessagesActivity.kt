@@ -16,6 +16,8 @@ import android.support.v4.app.ActivityCompat
 import android.content.pm.PackageManager
 import android.support.v4.content.ContextCompat
 import android.os.Vibrator
+import android.view.KeyEvent
+import android.view.Menu
 import edu.ucsc.retap.retap.vibration.VibrationInteractor
 
 class MessagesActivity : AppCompatActivity() {
@@ -56,7 +58,9 @@ class MessagesActivity : AppCompatActivity() {
 
     private fun isSMSPermissionGranted(): Boolean {
         return ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) ==
-                PackageManager.PERMISSION_GRANTED
+                PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS) ==
+                        PackageManager.PERMISSION_GRANTED
     }
 
     override fun onRequestPermissionsResult(
@@ -65,14 +69,43 @@ class MessagesActivity : AppCompatActivity() {
     ) {
         when (requestCode) {
             SMS_PERMISSION_CODE -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.isNotEmpty() &&
+                        grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     presenter.loadMessages()
                 }
                 return
             }
         }
     }
+
     private fun requestReadSMSPermission() {
-        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_SMS), SMS_PERMISSION_CODE)
+        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_SMS,
+                Manifest.permission.RECEIVE_SMS), SMS_PERMISSION_CODE)
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        when (keyCode) {
+            KeyEvent.KEYCODE_VOLUME_DOWN -> {
+                presenter.onVolumeDown()
+                return true
+            }
+            KeyEvent.KEYCODE_VOLUME_UP -> {
+                presenter.onVolumeUp()
+                return true
+            }
+        }
+        return super.onKeyDown(keyCode, event)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_messages, menu)
+
+        val pauseAction = menu?.findItem(R.id.action_pause)
+        pauseAction?.setOnMenuItemClickListener {
+            presenter.pauseVibration()
+            return@setOnMenuItemClickListener true
+        }
+
+        return super.onCreateOptionsMenu(menu)
     }
 }

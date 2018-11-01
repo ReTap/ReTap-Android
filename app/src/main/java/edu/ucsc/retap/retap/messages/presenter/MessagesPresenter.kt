@@ -25,13 +25,41 @@ class MessagesPresenter(
                 .doOnSuccess {
                     messagesAdapter.items = it
                     messagesViewModule.hideLoading()
-
-                    // Read first message.
-                    vibrationInteractor.vibrate(it[0])
-                    messagesAdapter.selectedItemIndex = 0
                 }
                 .subscribe()
         )
+
+        compositeDisposable.add(
+                messagesAdapter.observeItemClick()
+                        .doOnNext {
+                           setItemIndex(it)
+                        }
+                        .subscribe()
+        )
+    }
+
+    fun onVolumeUp() {
+        val newIndex = maxOf(-1, messagesAdapter.selectedItemIndex - 1)
+        setItemIndex(newIndex)
+    }
+
+    fun onVolumeDown() {
+        val newIndex = minOf(messagesAdapter.items.size - 1, messagesAdapter.selectedItemIndex + 1)
+        setItemIndex(newIndex)
+    }
+
+    fun pauseVibration() {
+        setItemIndex(-1)
+        vibrationInteractor.stop()
+    }
+
+    private fun setItemIndex(index: Int) {
+        if (index < 0) {
+            vibrationInteractor.stop()
+        } else {
+            vibrationInteractor.vibrate(messagesAdapter.items[index])
+        }
+        messagesAdapter.selectedItemIndex = index
     }
 
     fun cleanUp() {
