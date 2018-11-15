@@ -137,7 +137,8 @@ class VibrationInteractor(
         val wordGap = dot * DOTS_IN_WORD_GAP
 
         val words =
-            message.toUpperCase().trim { it <= ' ' }.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+            message.toUpperCase().trim { it <= ' ' }
+                    .split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         val vibrationObjects = ArrayList<Long>()
         val charset = if (isNumber && vibrateCounts) CHARSET_COUNTS else CHARSET_MORSE
         val lookups = if (isNumber && vibrateCounts) COUNTS else MORSE

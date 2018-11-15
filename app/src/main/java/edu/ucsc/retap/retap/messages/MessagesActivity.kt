@@ -1,35 +1,29 @@
 package edu.ucsc.retap.retap.messages
 
-import android.Manifest
 import android.content.Context
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import edu.ucsc.retap.retap.R
-import edu.ucsc.retap.retap.messages.adapter.MessagesAdapter
 import edu.ucsc.retap.retap.messages.interactor.MessagesInteractor
 import edu.ucsc.retap.retap.messages.presenter.MessagesPresenter
 import edu.ucsc.retap.retap.messages.view.MessagesViewModule
-import android.support.v4.app.ActivityCompat
-import android.content.pm.PackageManager
-import android.support.v4.content.ContextCompat
 import android.os.Vibrator
 import android.view.KeyEvent
 import android.view.Menu
+import edu.ucsc.retap.retap.common.BaseActivity
+import edu.ucsc.retap.retap.messages.adapter.MessagesAdapter
 import edu.ucsc.retap.retap.vibration.VibrationInteractor
 
-class MessagesActivity : AppCompatActivity() {
-    private companion object {
-       private const val SMS_PERMISSION_CODE = 1
+class MessagesActivity : BaseActivity() {
+    companion object {
+        const val EXTRA_PHONE_NUMBER = "e_phone_number"
     }
-
     private lateinit var presenter: MessagesPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_messages)
 
         val recyclerView = findViewById<RecyclerView>(R.id.messages_view)
         val adapter = MessagesAdapter(LayoutInflater.from(this))
@@ -37,50 +31,23 @@ class MessagesActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
 
         val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        val messagesInteractor = MessagesInteractor(this)
+        messagesInteractor.filterByPhone = intent.getStringExtra(EXTRA_PHONE_NUMBER)
         presenter = MessagesPresenter(MessagesViewModule(findViewById(R.id.root)), adapter,
-            MessagesInteractor(this), VibrationInteractor(vibrator))
+            messagesInteractor, VibrationInteractor(vibrator))
     }
+
+    override fun layoutId(): Int = R.layout.activity_messages
 
     override fun onStart() {
         super.onStart()
-        if (!isSMSPermissionGranted()) {
-            requestReadSMSPermission()
-        } else {
-            presenter.loadMessages()
-        }
+        presenter.loadMessages()
     }
 
     override fun onDestroy() {
         presenter.cleanUp()
         // Super call always goes last.
         super.onDestroy()
-    }
-
-    private fun isSMSPermissionGranted(): Boolean {
-        return ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) ==
-                PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS) ==
-                        PackageManager.PERMISSION_GRANTED
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>, grantResults: IntArray
-    ) {
-        when (requestCode) {
-            SMS_PERMISSION_CODE -> {
-                if (grantResults.isNotEmpty() &&
-                        grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    presenter.loadMessages()
-                }
-                return
-            }
-        }
-    }
-
-    private fun requestReadSMSPermission() {
-        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_SMS,
-                Manifest.permission.RECEIVE_SMS), SMS_PERMISSION_CODE)
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {

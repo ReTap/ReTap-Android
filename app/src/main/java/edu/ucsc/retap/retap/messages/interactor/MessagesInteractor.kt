@@ -6,6 +6,8 @@ import edu.ucsc.retap.retap.messages.model.Message
 import io.reactivex.Single
 
 class MessagesInteractor(private val context: Context) {
+    var filterByPhone: String? = null
+
     companion object {
         private const val SMS_CONTENT_RESOLVER_URI = "content://sms/inbox"
     }
@@ -33,7 +35,12 @@ class MessagesInteractor(private val context: Context) {
                 }
             }
             cursor.close()
-            smsMessages
+
+            return@fromCallable if (filterByPhone != null) {
+                smsMessages.filter { it.sender == filterByPhone }
+            } else {
+                smsMessages
+            }
         }
     }
 }

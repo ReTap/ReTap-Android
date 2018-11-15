@@ -9,10 +9,10 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
 class MessagesPresenter(
-    private val messagesViewModule: MessagesViewModule,
-    private val messagesAdapter: MessagesAdapter,
-    private val messagesInteractor: MessagesInteractor,
-    private val vibrationInteractor: VibrationInteractor) {
+        private val messagesViewModule: MessagesViewModule,
+        private val messagesAdapter: MessagesAdapter,
+        private val messagesInteractor: MessagesInteractor,
+        private val vibrationInteractor: VibrationInteractor) {
 
     private val compositeDisposable = CompositeDisposable()
 
