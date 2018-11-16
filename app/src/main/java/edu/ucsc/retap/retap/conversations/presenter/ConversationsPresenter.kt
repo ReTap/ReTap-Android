@@ -1,8 +1,7 @@
 package edu.ucsc.retap.retap.messages.presenter
 
-import edu.ucsc.retap.retap.conversations.adapter.ConversationsAdapter
-import edu.ucsc.retap.retap.conversations.model.Conversation
 import edu.ucsc.retap.retap.conversations.view.ConversationsViewModule
+import edu.ucsc.retap.retap.messages.adapter.MessagesAdapter
 import edu.ucsc.retap.retap.messages.interactor.MessagesInteractor
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -10,7 +9,7 @@ import io.reactivex.schedulers.Schedulers
 
 class ConversationsPresenter(
         private val conversationsViewModule: ConversationsViewModule,
-        private val conversationsAdapter: ConversationsAdapter,
+        private val messagesAdapter: MessagesAdapter,
         private val messagesInteractor: MessagesInteractor) {
 
     private val compositeDisposable = CompositeDisposable()
@@ -22,19 +21,20 @@ class ConversationsPresenter(
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSuccess {
-                    val items = it
-                            .map { it.sender }
-                            .distinct()
-                            .map { Conversation(it) }
+                    val messages = it
+                    val items = messages
+                            .distinctBy {
+                                it.sender
+                            }
 
-                    conversationsAdapter.items = items
+                    messagesAdapter.items = items
                     conversationsViewModule.hideLoading()
                 }
                 .subscribe()
         )
 
         compositeDisposable.add(
-                conversationsAdapter.observeItemClick()
+                messagesAdapter.observeItemClick()
                         .doOnNext {
                            setItemIndex(it)
                         }
@@ -43,7 +43,7 @@ class ConversationsPresenter(
     }
 
     private fun setItemIndex(index: Int) {
-        conversationsAdapter.selectedItemIndex = index
+        messagesAdapter.selectedItemIndex = index
     }
 
     fun cleanUp() {

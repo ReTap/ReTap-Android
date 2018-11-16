@@ -12,11 +12,11 @@ import android.support.v4.app.ActivityCompat
 import android.content.pm.PackageManager
 import android.support.v4.content.ContextCompat
 import android.view.KeyEvent
-import android.view.Menu
 import edu.ucsc.retap.retap.common.BaseActivity
-import edu.ucsc.retap.retap.conversations.adapter.ConversationsAdapter
+import edu.ucsc.retap.retap.conversations.interactor.ContactsHelper
 import edu.ucsc.retap.retap.conversations.view.ConversationsViewModule
 import edu.ucsc.retap.retap.messages.MessagesActivity
+import edu.ucsc.retap.retap.messages.adapter.MessagesAdapter
 import edu.ucsc.retap.retap.messages.presenter.ConversationsPresenter
 import io.reactivex.disposables.CompositeDisposable
 
@@ -32,14 +32,23 @@ class ConversationsActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
 
         val recyclerView = findViewById<RecyclerView>(R.id.messages_view)
-        val adapter = ConversationsAdapter(LayoutInflater.from(this))
+        val adapter = MessagesAdapter(LayoutInflater.from(this), R.layout.item_conversation)
         compositeDisposable
                 .add(
                         adapter.observeItemClick()
                                 .doOnNext {
                                     val intent = Intent(this, MessagesActivity::class.java)
+                                    val item = adapter.items[it]
+                                    val contact = ContactsHelper.retrieveContactPhoto(this,
+                                            item.sender)
+                                    val title = if (contact.first.isEmpty()) {
+                                        item.sender
+                                    } else {
+                                        contact.first
+                                    }
                                     intent.putExtra(MessagesActivity.EXTRA_PHONE_NUMBER,
-                                            adapter.items[it].phoneNumber)
+                                            item.sender)
+                                    intent.putExtra(MessagesActivity.EXTRA_TITLE, title)
                                     startActivity(intent)
                                 }
                                 .subscribe()
@@ -73,6 +82,8 @@ class ConversationsActivity : BaseActivity() {
         return ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) ==
                 PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS) ==
+                        PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) ==
                         PackageManager.PERMISSION_GRANTED
     }
 
@@ -92,8 +103,12 @@ class ConversationsActivity : BaseActivity() {
     }
 
     private fun requestReadSMSPermission() {
-        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_SMS,
-                Manifest.permission.RECEIVE_SMS), SMS_PERMISSION_CODE)
+        ActivityCompat.requestPermissions(this,
+                arrayOf(
+                        Manifest.permission.READ_SMS,
+                        Manifest.permission.RECEIVE_SMS,
+                        Manifest.permission.READ_CONTACTS
+                ), SMS_PERMISSION_CODE)
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {

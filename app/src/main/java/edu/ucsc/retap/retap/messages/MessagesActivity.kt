@@ -19,6 +19,7 @@ import edu.ucsc.retap.retap.vibration.VibrationInteractor
 class MessagesActivity : BaseActivity() {
     companion object {
         const val EXTRA_PHONE_NUMBER = "e_phone_number"
+        const val EXTRA_TITLE = "e_title"
     }
     private lateinit var presenter: MessagesPresenter
 
@@ -26,9 +27,11 @@ class MessagesActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
 
         val recyclerView = findViewById<RecyclerView>(R.id.messages_view)
-        val adapter = MessagesAdapter(LayoutInflater.from(this))
+        val adapter = MessagesAdapter(LayoutInflater.from(this), R.layout.item_message)
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
+
+        supportActionBar?.title = intent.getStringExtra(EXTRA_TITLE) ?: ""
 
         val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         val messagesInteractor = MessagesInteractor(this)
