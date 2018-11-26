@@ -13,11 +13,11 @@ class MessageItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) 
     private val profileImageView = itemView.findViewById<ImageView>(R.id.profile_image)
 
     fun setSenderText(sender: String) {
-        senderTextView.text = sender
+        senderTextView?.text = sender
     }
 
     fun setContentText(content: String) {
-        contentTextView.text = content
+        contentTextView?.text = content
     }
 
     fun setProfileImage(profileImage: Bitmap) {
@@ -29,7 +29,7 @@ class MessageItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) 
             if (isSelected) {
                 R.color.selectedColor
             } else {
-                android.R.color.white
+                android.R.color.transparent
             }
         )
     }

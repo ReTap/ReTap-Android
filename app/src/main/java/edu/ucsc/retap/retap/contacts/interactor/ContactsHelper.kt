@@ -1,4 +1,4 @@
-package edu.ucsc.retap.retap.conversations.interactor
+package edu.ucsc.retap.retap.contacts.interactor
 
 import android.graphics.BitmapFactory
 import android.provider.ContactsContract
@@ -11,10 +11,11 @@ import edu.ucsc.retap.retap.R
 import java.io.IOException
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import edu.ucsc.retap.retap.contacts.model.Contact
 
 object ContactsHelper {
-    fun retrieveContactPhoto(context: Context, number: String): Pair<String, Bitmap> {
-        val contentResolver = context.getContentResolver()
+    fun getContact(context: Context, number: String): Contact {
+        val contentResolver = context.contentResolver
         var contactId: String? = null
         var displayName: String? = null
         val uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI,
@@ -55,10 +56,10 @@ object ContactsHelper {
             e.printStackTrace()
         }
 
-        return Pair(displayName ?: "", photo)
+        return Contact(photo, displayName)
     }
 
-    fun drawableToBitmap(drawable: Drawable): Bitmap {
+    private fun drawableToBitmap(drawable: Drawable): Bitmap {
         if (drawable is BitmapDrawable) {
             return drawable.bitmap
         }
@@ -66,7 +67,7 @@ object ContactsHelper {
         val bitmap = Bitmap.createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight,
                 Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
-        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight())
+        drawable.setBounds(0, 0, canvas.width, canvas.height)
         drawable.draw(canvas)
 
         return bitmap

@@ -1,19 +1,14 @@
 package edu.ucsc.retap.retap.messages.model
 
-import android.telephony.SmsMessage
+import android.graphics.Bitmap
 
 /**
  * Contains information about a SMS message.
  */
 data class Message(
-    var sender: String,
-    var contents: String
-) {
-    companion object {
-        fun createFrom(smsMessage: SmsMessage): Message =
-                Message(
-                    smsMessage.displayOriginatingAddress,
-                    smsMessage.displayMessageBody
-                )
-    }
-}
+        val profile: Bitmap,
+        val displayName: String?,
+        val sender: String,
+        val contents: String,
+        val sent: Long
+)

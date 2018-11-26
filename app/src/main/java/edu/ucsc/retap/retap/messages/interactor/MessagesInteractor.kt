@@ -2,11 +2,14 @@ package edu.ucsc.retap.retap.messages.interactor
 
 import android.content.Context
 import android.net.Uri
+import edu.ucsc.retap.retap.contacts.interactor.ContactsHelper
+import edu.ucsc.retap.retap.contacts.model.Contact
 import edu.ucsc.retap.retap.messages.model.Message
 import io.reactivex.Single
 
 class MessagesInteractor(private val context: Context) {
     var filterByPhone: String? = null
+    private val senderPhoneNumberToContactMap = HashMap<String, Contact>()
 
     companion object {
         private const val SMS_CONTENT_RESOLVER_URI = "content://sms/inbox"
@@ -27,9 +30,21 @@ class MessagesInteractor(private val context: Context) {
             // Read the sms data and store it in the list
             if (cursor.moveToFirst()) {
                 for (i in 0 until cursor.count) {
-                    val sender = cursor.getString(cursor.getColumnIndexOrThrow("address")).toString()
-                    val contents = cursor.getString(cursor.getColumnIndexOrThrow("body")).toString()
-                    val newMessage = Message(sender, contents)
+                    val sender = cursor.getString(cursor
+                            .getColumnIndexOrThrow("address")).toString()
+                    val contents = cursor.getString(cursor
+                            .getColumnIndexOrThrow("body")).toString()
+                    val date = cursor.getString(cursor
+                            .getColumnIndexOrThrow("date")).toString()
+
+                    val contact = getContactForSender(sender)
+                    val newMessage = Message(
+                            contact.bitmap,
+                            contact.displayName,
+                            sender,
+                            contents,
+                            date.toLong()
+                    )
                     smsMessages.add(newMessage)
                     cursor.moveToNext()
                 }
@@ -42,5 +57,15 @@ class MessagesInteractor(private val context: Context) {
                 smsMessages
             }
         }
+    }
+
+    private fun getContactForSender(sender: String): Contact {
+        val contactFromCache = senderPhoneNumberToContactMap[sender]
+        if (contactFromCache != null) {
+            return contactFromCache
+        }
+        val fetchedContact = ContactsHelper.getContact(context, sender)
+        senderPhoneNumberToContactMap[sender] = fetchedContact
+        return fetchedContact
     }
 }

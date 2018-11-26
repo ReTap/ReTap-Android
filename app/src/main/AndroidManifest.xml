@@ -34,7 +34,7 @@
             </intent-filter>
         </receiver>
               
-        <activity android:name=".reminder.reminderActivity"></activity>
+        <activity android:name=".reminder.ReminderActivity"/>
 
     </application>
 

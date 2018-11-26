@@ -25,6 +25,8 @@ class MessagesPresenter(
                 .doOnSuccess {
                     messagesAdapter.items = it
                     messagesViewModule.hideLoading()
+                    it.firstOrNull() ?: return@doOnSuccess
+                    setItemIndex(0)
                 }
                 .subscribe()
         )

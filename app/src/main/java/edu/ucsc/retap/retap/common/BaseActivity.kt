@@ -1,5 +1,6 @@
 package edu.ucsc.retap.retap.common
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
@@ -11,6 +12,8 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import androidx.annotation.LayoutRes
 import edu.ucsc.retap.retap.R
+import edu.ucsc.retap.retap.conversations.ConversationsActivity
+import edu.ucsc.retap.retap.reminder.ReminderActivity
 
 /**
  * Activity at the base level. Includes the app's navigation drawer.
@@ -38,6 +41,22 @@ abstract class BaseActivity : AppCompatActivity() {
             menuItem.isChecked = true
             // close drawer when item is tapped
             drawerLayout.closeDrawers()
+
+            when (menuItem.itemId) {
+                R.id.nav_inbox -> {
+                    if (this !is ConversationsActivity) {
+                        val intent = Intent(this, ConversationsActivity::class.java)
+                        startActivity(intent)
+                    }
+
+                }
+                R.id.nav_reminders -> {
+                    if (this !is ReminderActivity) {
+                        val intent = Intent(this, ReminderActivity::class.java)
+                        startActivity(intent)
+                    }
+                }
+            }
             true
         }
     }

@@ -5,11 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="10dp"
-
-    tools:context=".reminder.reminderActivity">
+    tools:context=".reminder.ReminderActivity">
 
     <ListView
         android:id="@+id/list_reminder"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
+
 </RelativeLayout>

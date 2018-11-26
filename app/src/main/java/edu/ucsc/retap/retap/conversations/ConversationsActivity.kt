@@ -10,46 +10,40 @@ import edu.ucsc.retap.retap.R
 import edu.ucsc.retap.retap.messages.interactor.MessagesInteractor
 import android.support.v4.app.ActivityCompat
 import android.content.pm.PackageManager
+import android.os.Handler
+import android.os.Looper
 import android.support.v4.content.ContextCompat
+import android.support.v4.widget.DrawerLayout
 import android.view.KeyEvent
 import edu.ucsc.retap.retap.common.BaseActivity
-import edu.ucsc.retap.retap.conversations.interactor.ContactsHelper
 import edu.ucsc.retap.retap.conversations.view.ConversationsViewModule
 import edu.ucsc.retap.retap.messages.MessagesActivity
 import edu.ucsc.retap.retap.messages.adapter.MessagesAdapter
+import edu.ucsc.retap.retap.messages.model.Message
 import edu.ucsc.retap.retap.messages.presenter.ConversationsPresenter
 import io.reactivex.disposables.CompositeDisposable
 
 class ConversationsActivity : BaseActivity() {
     private companion object {
         private const val SMS_PERMISSION_CODE = 1
+        private const val AUTOMATICALLY_SELECT_DELAY_MS = 2000L
     }
 
     private lateinit var presenter: ConversationsPresenter
     private val compositeDisposable = CompositeDisposable()
+    private val handler: Handler = Handler(Looper.getMainLooper())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        findViewById<DrawerLayout>(R.id.drawer_layout).setBackgroundResource(android.R.color.white)
         val recyclerView = findViewById<RecyclerView>(R.id.messages_view)
         val adapter = MessagesAdapter(LayoutInflater.from(this), R.layout.item_conversation)
         compositeDisposable
                 .add(
                         adapter.observeItemClick()
                                 .doOnNext {
-                                    val intent = Intent(this, MessagesActivity::class.java)
-                                    val item = adapter.items[it]
-                                    val contact = ContactsHelper.retrieveContactPhoto(this,
-                                            item.sender)
-                                    val title = if (contact.first.isEmpty()) {
-                                        item.sender
-                                    } else {
-                                        contact.first
-                                    }
-                                    intent.putExtra(MessagesActivity.EXTRA_PHONE_NUMBER,
-                                            item.sender)
-                                    intent.putExtra(MessagesActivity.EXTRA_TITLE, title)
-                                    startActivity(intent)
+                                    navigateToConversation(adapter.items[it])
                                 }
                                 .subscribe()
                 )
@@ -114,12 +108,37 @@ class ConversationsActivity : BaseActivity() {
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         when (keyCode) {
             KeyEvent.KEYCODE_VOLUME_DOWN -> {
+                presenter.onVolumeDown()
+                automaticallySelectItem()
                 return true
             }
             KeyEvent.KEYCODE_VOLUME_UP -> {
+                presenter.onVolumeUp()
+                automaticallySelectItem()
                 return true
             }
         }
+
         return super.onKeyDown(keyCode, event)
+    }
+
+    private fun automaticallySelectItem() {
+        handler.removeCallbacksAndMessages(null)
+        val message = presenter.currentSelectedItem() ?: return
+        handler.postDelayed(
+                {
+                    navigateToConversation(message)
+                },
+                AUTOMATICALLY_SELECT_DELAY_MS
+        )
+    }
+
+    private fun navigateToConversation(item: Message) {
+        val intent = Intent(this, MessagesActivity::class.java)
+        val title = item.displayName ?: item.sender
+        intent.putExtra(MessagesActivity.EXTRA_PHONE_NUMBER,
+                item.sender)
+        intent.putExtra(MessagesActivity.EXTRA_TITLE, title)
+        startActivity(intent)
     }
 }

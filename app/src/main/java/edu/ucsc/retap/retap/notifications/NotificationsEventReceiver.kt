@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Vibrator
 import android.telephony.SmsMessage
+import edu.ucsc.retap.retap.contacts.interactor.ContactsHelper
 import edu.ucsc.retap.retap.messages.model.Message
 import edu.ucsc.retap.retap.vibration.VibrationInteractor
 
@@ -24,7 +25,18 @@ class NotificationsEventReceiver: BroadcastReceiver() {
                 val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
                 val vibrationInteractor = VibrationInteractor(vibrator)
                 val pdus = extras.get(PDUS_KEY) as Array<*>
-                val message = Message.createFrom(SmsMessage.createFromPdu(pdus[0] as ByteArray))
+                val smsMessage = SmsMessage.createFromPdu(pdus[0] as ByteArray)
+                val sender = smsMessage.originatingAddress
+                val body = smsMessage.messageBody
+                val date = smsMessage.timestampMillis
+                val contact = ContactsHelper.getContact(context, sender)
+                val message = Message(
+                        contact.bitmap,
+                        contact.displayName,
+                        sender,
+                        body,
+                        date
+                )
                 vibrationInteractor.vibrate(message)
             }
         }
