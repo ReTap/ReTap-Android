@@ -4,7 +4,9 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Vibrator
+import android.preference.PreferenceManager
 import android.telephony.SmsMessage
+import edu.ucsc.retap.retap.common.Constants
 import edu.ucsc.retap.retap.contacts.interactor.ContactsHelper
 import edu.ucsc.retap.retap.messages.model.Message
 import edu.ucsc.retap.retap.vibration.VibrationInteractor
@@ -15,9 +17,11 @@ class NotificationsEventReceiver: BroadcastReceiver() {
         private const val PDUS_KEY = "pdus"
     }
 
-    override fun onReceive(context: Context?, intent: Intent?) {
-        context ?: return
-        intent ?: return
+    override fun onReceive(context: Context, intent: Intent) {
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+        if (!sharedPreferences.getBoolean(Constants.PREF_VIBRATE_ON_RECEIVE, false)) {
+            return
+        }
 
         when (intent.action) {
             SMS_RECEIVED -> {

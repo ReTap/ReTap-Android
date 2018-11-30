@@ -8,11 +8,10 @@
         tools:context=".messages.MessagesActivity">
 
     <android.support.v7.widget.RecyclerView
+        android:background="@color/background"
         android:id="@+id/messages_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"/>
+        android:layout_height="match_parent"/>
 
     <FrameLayout
         android:id="@+id/loading"

@@ -8,11 +8,11 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profile_image"
-        android:layout_width="44dp"
-        android:layout_height="44dp"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         android:src="@drawable/ic_profile"
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="10dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:contentDescription="@null"/>
@@ -41,6 +41,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/lightTextColor"
             android:text="3 mins"
+            android:textStyle="bold"
             android:textSize="12sp"/>
 
     </LinearLayout>

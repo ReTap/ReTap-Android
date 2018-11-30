@@ -14,6 +14,7 @@ import androidx.annotation.LayoutRes
 import edu.ucsc.retap.retap.R
 import edu.ucsc.retap.retap.conversations.ConversationsActivity
 import edu.ucsc.retap.retap.reminder.ReminderActivity
+import edu.ucsc.retap.retap.settings.SettingsActivity
 
 /**
  * Activity at the base level. Includes the app's navigation drawer.
@@ -53,6 +54,12 @@ abstract class BaseActivity : AppCompatActivity() {
                 R.id.nav_reminders -> {
                     if (this !is ReminderActivity) {
                         val intent = Intent(this, ReminderActivity::class.java)
+                        startActivity(intent)
+                    }
+                }
+                R.id.nav_settings -> {
+                    if (this !is SettingsActivity) {
+                        val intent = Intent(this, SettingsActivity::class.java)
                         startActivity(intent)
                     }
                 }

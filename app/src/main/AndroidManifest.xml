@@ -36,6 +36,8 @@
               
         <activity android:name=".reminder.ReminderActivity"/>
 
+        <activity android:name=".settings.SettingsActivity"/>
+
     </application>
 
 </manifest>
