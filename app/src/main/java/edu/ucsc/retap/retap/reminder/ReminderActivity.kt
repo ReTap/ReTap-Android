@@ -19,7 +19,7 @@ class ReminderActivity : BaseActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem):Boolean {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_add_task -> {
                 val taskEditText = EditText(this)
@@ -27,15 +27,16 @@ class ReminderActivity : BaseActivity() {
                     .setTitle("Add a Reminder")
                     .setMessage("Keep It Short")
                     .setView(taskEditText)
-                    .setPositiveButton("Add", object: DialogInterface.OnClickListener() {
-                        fun onClick(dialog:DialogInterface, which:Int) {
-                            val task = String.valueOf(taskEditText.getText())
+                    .setPositiveButton("Add", object: DialogInterface.OnClickListener {
+                        override fun onClick(dialog:DialogInterface, which:Int) {
+                            val task = taskEditText.getText().toString()
                             Log.d(TAG, "Task to add: " + task)
                         }
                     })
                     .setNegativeButton("Cancel", null)
                     .create()
                 dialog.show()
+                true
             }
             else -> super.onOptionsItemSelected(item)
         }
