@@ -15,6 +15,7 @@ class MessagesAdapter(
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val itemClickPublishSubject = PublishSubject.create<Int>()
+    private val itemsInPlaintextMode = HashSet<Message>()
 
     var items: List<Message> = ArrayList()
         set(value) {
@@ -42,10 +43,25 @@ class MessagesAdapter(
         val messagesViewHolder = viewHolder as MessageItemViewHolder
         messagesViewHolder.setSenderText(item.displayName ?: item.sender)
         messagesViewHolder.setSelected(selectedItemIndex == position)
-        messagesViewHolder.setProfileImage(item.profile)
-        messagesViewHolder.setContentText(item.contents)
+
+        if (itemsInPlaintextMode.contains(item)) {
+            messagesViewHolder.showAsPlaintext(item.contents)
+        } else {
+            messagesViewHolder.showAsMorseCode(item.contents)
+        }
+
         messagesViewHolder.itemView.setOnClickListener {
             itemClickPublishSubject.onNext(position)
+        }
+        messagesViewHolder.itemView.setOnLongClickListener {
+            if (itemsInPlaintextMode.contains(item)) {
+                messagesViewHolder.showAsMorseCode(item.contents)
+                itemsInPlaintextMode.remove(item)
+            } else {
+                messagesViewHolder.showAsPlaintext(item.contents)
+                itemsInPlaintextMode.add(item)
+            }
+            true
         }
     }
 

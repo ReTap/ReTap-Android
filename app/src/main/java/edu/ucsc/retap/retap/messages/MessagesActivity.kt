@@ -2,25 +2,29 @@ package edu.ucsc.retap.retap.messages
 
 import android.content.Context
 import android.os.Bundle
+import android.os.Vibrator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.view.KeyEvent
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.View
+import android.widget.TextView
+import androidx.annotation.LayoutRes
 import edu.ucsc.retap.retap.R
+import edu.ucsc.retap.retap.common.BaseActivity
+import edu.ucsc.retap.retap.messages.adapter.MessagesAdapter
 import edu.ucsc.retap.retap.messages.interactor.MessagesInteractor
 import edu.ucsc.retap.retap.messages.presenter.MessagesPresenter
 import edu.ucsc.retap.retap.messages.view.MessagesViewModule
-import android.os.Vibrator
-import android.view.KeyEvent
-import android.view.Menu
-import edu.ucsc.retap.retap.common.BaseActivity
-import edu.ucsc.retap.retap.messages.adapter.MessagesAdapter
-import edu.ucsc.retap.retap.vibration.VibrationInteractor
+import edu.ucsc.retap.retap.morse.MorseInteractor
 
 class MessagesActivity : BaseActivity() {
     companion object {
         const val EXTRA_PHONE_NUMBER = "e_phone_number"
         const val EXTRA_TITLE = "e_title"
     }
+
     private lateinit var presenter: MessagesPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,16 +35,22 @@ class MessagesActivity : BaseActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
 
-        supportActionBar?.title = intent.getStringExtra(EXTRA_TITLE) ?: ""
-
         val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         val messagesInteractor = MessagesInteractor(this)
-        messagesInteractor.filterByPhone = intent.getStringExtra(EXTRA_PHONE_NUMBER)
+        val phoneNumber = intent.getStringExtra(EXTRA_PHONE_NUMBER)
+        val navigationTitle = findViewById<TextView>(R.id.navigation_title)
+        navigationTitle.text = phoneNumber
+        val navigationAction = findViewById<View>(R.id.action_icon)
+        navigationAction.visibility = View.GONE
+        messagesInteractor.filterByPhone = phoneNumber
         presenter = MessagesPresenter(MessagesViewModule(findViewById(R.id.root)), adapter,
-            messagesInteractor, VibrationInteractor(vibrator))
+                messagesInteractor, MorseInteractor(vibrator))
     }
 
-    override fun layoutId(): Int = R.layout.activity_messages
+    @LayoutRes
+    override fun layoutId(): Int = R.layout.activity_messages_list
+
+    override fun navigationTitleText(): String = intent.getStringExtra(EXTRA_PHONE_NUMBER)
 
     override fun onStart() {
         super.onStart()

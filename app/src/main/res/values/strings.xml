@@ -6,4 +6,6 @@
     <string name="settings">Settings</string>
     <string name="label_vibrate_notifications_title">Vibrate SMS Notifications</string>
     <string name="label_vibrate_notifications_description">Incoming SMS notifications will vibrate in Morse code.</string>
+    <string name="dot">•</string>
+    <string name="dash">–</string>
 </resources>

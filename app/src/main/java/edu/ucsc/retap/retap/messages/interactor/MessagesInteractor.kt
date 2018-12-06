@@ -39,7 +39,6 @@ class MessagesInteractor(private val context: Context) {
 
                     val contact = getContactForSender(sender)
                     val newMessage = Message(
-                            contact.bitmap,
                             contact.displayName,
                             sender,
                             contents,

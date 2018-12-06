@@ -14,7 +14,9 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
-        <activity android:name=".conversations.ConversationsActivity">
+        <activity
+            android:name=".inbox.InboxActivity"
+            android:configChanges="orientation">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -22,7 +24,9 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".messages.MessagesActivity"/>
+        <activity
+            android:name=".messages.MessagesActivity"
+            android:configChanges="orientation"/>
 
         <receiver
             android:name=".notifications.NotificationsEventReceiver"
@@ -34,9 +38,17 @@
             </intent-filter>
         </receiver>
               
-        <activity android:name=".reminder.ReminderActivity"/>
+        <activity
+            android:name=".reminder.ReminderActivity"
+            android:configChanges="orientation"/>
 
-        <activity android:name=".settings.SettingsActivity"/>
+        <activity
+            android:name=".settings.SettingsActivity"
+            android:configChanges="orientation"/>
+
+        <activity
+            android:name=".compose.ComposeActivity"
+            android:configChanges="orientation"/>
 
     </application>
 

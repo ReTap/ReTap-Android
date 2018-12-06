@@ -1,42 +1,42 @@
-package edu.ucsc.retap.retap.messages.presenter
+package edu.ucsc.retap.retap.inbox.presenter
 
-import edu.ucsc.retap.retap.conversations.view.ConversationsViewModule
 import edu.ucsc.retap.retap.messages.adapter.MessagesAdapter
 import edu.ucsc.retap.retap.messages.interactor.MessagesInteractor
 import edu.ucsc.retap.retap.messages.model.Message
+import edu.ucsc.retap.retap.messages.view.MessagesViewModule
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
-class ConversationsPresenter(
-        private val conversationsViewModule: ConversationsViewModule,
+class InboxPresenter(
+        private val messageViewModule: MessagesViewModule,
         private val messagesAdapter: MessagesAdapter,
         private val messagesInteractor: MessagesInteractor) {
 
     private val compositeDisposable = CompositeDisposable()
 
     fun loadMessages() {
-        conversationsViewModule.showLoading()
+        messageViewModule.showLoading()
         compositeDisposable.add(
-            messagesInteractor.getSMSMessages()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSuccess {
-                    val items = it
-                            .distinctBy {
-                                it.sender
-                            }
+                messagesInteractor.getSMSMessages()
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .doOnSuccess {
+                            val items = it
+                                    .distinctBy {
+                                        it.sender
+                                    }
 
-                    messagesAdapter.items = items
-                    conversationsViewModule.hideLoading()
-                }
-                .subscribe()
+                            messagesAdapter.items = items
+                            messageViewModule.hideLoading()
+                        }
+                        .subscribe()
         )
 
         compositeDisposable.add(
                 messagesAdapter.observeItemClick()
                         .doOnNext {
-                           setItemIndex(it)
+                            setItemIndex(it)
                         }
                         .subscribe()
         )

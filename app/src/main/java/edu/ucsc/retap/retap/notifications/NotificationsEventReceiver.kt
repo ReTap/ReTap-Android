@@ -9,9 +9,9 @@ import android.telephony.SmsMessage
 import edu.ucsc.retap.retap.common.Constants
 import edu.ucsc.retap.retap.contacts.interactor.ContactsHelper
 import edu.ucsc.retap.retap.messages.model.Message
-import edu.ucsc.retap.retap.vibration.VibrationInteractor
+import edu.ucsc.retap.retap.morse.MorseInteractor
 
-class NotificationsEventReceiver: BroadcastReceiver() {
+class NotificationsEventReceiver : BroadcastReceiver() {
     companion object {
         private const val SMS_RECEIVED = "android.provider.Telephony.SMS_RECEIVED"
         private const val PDUS_KEY = "pdus"
@@ -27,7 +27,7 @@ class NotificationsEventReceiver: BroadcastReceiver() {
             SMS_RECEIVED -> {
                 val extras = intent.extras ?: return
                 val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-                val vibrationInteractor = VibrationInteractor(vibrator)
+                val vibrationInteractor = MorseInteractor(vibrator)
                 val pdus = extras.get(PDUS_KEY) as Array<*>
                 val smsMessage = SmsMessage.createFromPdu(pdus[0] as ByteArray)
                 val sender = smsMessage.originatingAddress
@@ -35,7 +35,6 @@ class NotificationsEventReceiver: BroadcastReceiver() {
                 val date = smsMessage.timestampMillis
                 val contact = ContactsHelper.getContact(context, sender)
                 val message = Message(
-                        contact.bitmap,
                         contact.displayName,
                         sender,
                         body,

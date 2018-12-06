@@ -17,6 +17,17 @@
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/sender"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/small_spacing"
+            android:ellipsize="end"
+            android:lines="1"
+            android:textColor="@color/defaultTextColor"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
             android:id="@+id/body"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -27,7 +38,7 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="@dimen/light_divider_thickness"
+        android:layout_height="0.7dp"
         android:layout_alignParentBottom="true"
         android:background="@color/dividerColor" />
 

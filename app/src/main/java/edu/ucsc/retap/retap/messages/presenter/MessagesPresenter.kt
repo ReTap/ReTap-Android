@@ -3,7 +3,7 @@ package edu.ucsc.retap.retap.messages.presenter
 import edu.ucsc.retap.retap.messages.adapter.MessagesAdapter
 import edu.ucsc.retap.retap.messages.interactor.MessagesInteractor
 import edu.ucsc.retap.retap.messages.view.MessagesViewModule
-import edu.ucsc.retap.retap.vibration.VibrationInteractor
+import edu.ucsc.retap.retap.morse.MorseInteractor
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -12,29 +12,29 @@ class MessagesPresenter(
         private val messagesViewModule: MessagesViewModule,
         private val messagesAdapter: MessagesAdapter,
         private val messagesInteractor: MessagesInteractor,
-        private val vibrationInteractor: VibrationInteractor) {
+        private val morseInteractor: MorseInteractor) {
 
     private val compositeDisposable = CompositeDisposable()
 
     fun loadMessages() {
         messagesViewModule.showLoading()
         compositeDisposable.add(
-            messagesInteractor.getSMSMessages()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSuccess {
-                    messagesAdapter.items = it
-                    messagesViewModule.hideLoading()
-                    it.firstOrNull() ?: return@doOnSuccess
-                    setItemIndex(0)
-                }
-                .subscribe()
+                messagesInteractor.getSMSMessages()
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .doOnSuccess {
+                            messagesAdapter.items = it
+                            messagesViewModule.hideLoading()
+                            it.firstOrNull() ?: return@doOnSuccess
+                            setItemIndex(0)
+                        }
+                        .subscribe()
         )
 
         compositeDisposable.add(
                 messagesAdapter.observeItemClick()
                         .doOnNext {
-                           setItemIndex(it)
+                            setItemIndex(it)
                         }
                         .subscribe()
         )
@@ -52,14 +52,14 @@ class MessagesPresenter(
 
     fun pauseVibration() {
         setItemIndex(-1)
-        vibrationInteractor.stop()
+        morseInteractor.stop()
     }
 
     private fun setItemIndex(index: Int) {
         if (index < 0) {
-            vibrationInteractor.stop()
+            morseInteractor.stop()
         } else {
-            vibrationInteractor.vibrate(messagesAdapter.items[index])
+            morseInteractor.vibrate(messagesAdapter.items[index])
         }
         messagesAdapter.selectedItemIndex = index
     }

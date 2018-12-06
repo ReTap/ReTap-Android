@@ -2,16 +2,19 @@ package edu.ucsc.retap.retap.settings
 
 import android.os.Bundle
 import android.preference.PreferenceManager
+import android.widget.TextView
 import android.widget.ToggleButton
+import androidx.annotation.LayoutRes
 import edu.ucsc.retap.retap.R
 import edu.ucsc.retap.retap.common.BaseActivity
 import edu.ucsc.retap.retap.common.Constants
 
 class SettingsActivity : BaseActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        val navigationTitle = findViewById<TextView>(R.id.navigation_title)
+        navigationTitle.setText(R.string.settings)
         val toggleButton = findViewById<ToggleButton>(R.id.toggle_button)
         toggleButton.isChecked = sharedPreferences
                 .getBoolean(Constants.PREF_VIBRATE_ON_RECEIVE, false)
@@ -20,8 +23,11 @@ class SettingsActivity : BaseActivity() {
                     .edit()
                     .putBoolean(Constants.PREF_VIBRATE_ON_RECEIVE, isChecked)
                     .apply()
-            }
+        }
     }
 
+    @LayoutRes
     override fun layoutId(): Int = R.layout.activity_settings
+
+    override fun navigationTitleText(): String = resources.getString(R.string.settings)
 }
