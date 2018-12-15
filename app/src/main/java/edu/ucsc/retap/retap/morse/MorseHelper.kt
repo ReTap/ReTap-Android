@@ -7,10 +7,13 @@ import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import edu.ucsc.retap.retap.R
 
+/**
+ * Methods for converting between Morse and plaintext.
+ */
 @Suppress("DEPRECATION")
 object MorseHelper {
-    private const val DOT = true
-    private const val DASH = false
+    const val DOT = true
+    const val DASH = false
     private const val DOT_STRING = "•"
     private const val DASH_STRING = "–"
 
@@ -86,9 +89,15 @@ object MorseHelper {
             booleanArrayOf(DOT, DOT, DOT, DOT, DOT, DOT, DOT, DOT, DOT) //9
     )
 
+    /**
+     * Converts plain text to morse code.
+     * @param context the current context for fetching resources
+     * @param message the plain text message
+     */
     fun convertToMorse(context: Context, message: String): Spannable {
         val stringBuilder = SpannableStringBuilder()
-        for (rawCharacter in message.toCharArray()) {
+        val messageCharArray = message.toCharArray()
+        messageCharArray.forEachIndexed { index, rawCharacter ->
             val character = Character.toUpperCase(rawCharacter)
             val morseChars = CHARSET_MORSE.toCharArray()
             val countsChars = CHARSET_COUNTS.toCharArray()
@@ -107,11 +116,19 @@ object MorseHelper {
                 }
                 else -> stringBuilder.append(character)
             }
+
+            if (index != messageCharArray.size - 1) {
+                appendSpace(stringBuilder)
+            }
         }
 
         return stringBuilder
     }
 
+    /**
+     * Converts a string in Morse code to plain text.
+     * @param morse the Morse code
+     */
     fun convertToText(morse: String): String {
         val escapedSpaces = morse.replace("  ", " / ")
         val morseCharacters = escapedSpaces.split(" ")
@@ -163,6 +180,12 @@ object MorseHelper {
                 .indexOfFirst { it }
     }
 
+    /**
+     * Appends a character in Morse to the given string builder.
+     * @param dot true if a dot should be added, false if a dash should be added
+     * @param context the current context used for fetching resources
+     * @param stringBuilder the string builder to add the new character to
+     */
     fun appendMorse(dot: Boolean, context: Context, stringBuilder: SpannableStringBuilder) {
         val dotString = SpannableString(DOT_STRING)
         if (dot) {
@@ -176,5 +199,13 @@ object MorseHelper {
                     Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
             stringBuilder.append(dashString)
         }
+    }
+
+    /**
+     * Appends a space to the given string builder.
+     * @param stringBuilder the string buidler
+     */
+    fun appendSpace(stringBuilder: SpannableStringBuilder) {
+        stringBuilder.append(" ")
     }
 }

@@ -11,6 +11,11 @@ import edu.ucsc.retap.retap.contacts.interactor.ContactsHelper
 import edu.ucsc.retap.retap.messages.model.Message
 import edu.ucsc.retap.retap.morse.MorseInteractor
 
+/**
+ * BroadcastReceiver responsible for intercepting SMS notifications and vibrating them if the user has enabled
+ * the notification vibration setting.
+ */
+@SuppressWarnings("DEPRECATED")
 class NotificationsEventReceiver : BroadcastReceiver() {
     companion object {
         private const val SMS_RECEIVED = "android.provider.Telephony.SMS_RECEIVED"
@@ -35,8 +40,7 @@ class NotificationsEventReceiver : BroadcastReceiver() {
                 val date = smsMessage.timestampMillis
                 val contact = ContactsHelper.getContact(context, sender)
                 val message = Message(
-                        contact.displayName,
-                        sender,
+                        contact,
                         body,
                         date
                 )

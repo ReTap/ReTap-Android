@@ -4,8 +4,14 @@ import android.graphics.PorterDuff
 import android.view.View
 import android.widget.ProgressBar
 import edu.ucsc.retap.retap.R
+import edu.ucsc.retap.retap.common.di.ActivityScope
+import javax.inject.Inject
 
-class MessagesViewModule(rootView: View) {
+/**
+ * The view module for the messages list.
+ */
+@ActivityScope
+class MessagesViewModule @Inject constructor(rootView: View) {
     private val loading = rootView.findViewById<View>(R.id.loading)
 
     init {

@@ -2,36 +2,45 @@ package edu.ucsc.retap.retap.morse
 
 import android.os.Vibrator
 import android.util.Log
+import edu.ucsc.retap.retap.common.di.ApplicationScope
 import edu.ucsc.retap.retap.messages.model.Message
+import javax.inject.Inject
 
 /**
  * Converted to Kotlin based on
  * https://github.com/JakeWharton/SMSMorse/blob/master/src/com/jakewharton/smsmorse/transaction/EventReceiver.java
  */
-@Suppress("DEPRECATION")
-class MorseInteractor(
+@ApplicationScope
+class MorseInteractor @Inject constructor(
         private val vibrator: Vibrator
 ) {
     companion object {
-        //Preference defaults
+        // Preference defaults
         private const val DEFAULT_VIBRATE_COUNTS = false
         private const val DEFAULT_DOT_LENGTH = 150
         private const val DEFAULT_INITIAL_PAUSE = 500L
 
-        //Morse code
+        // Morse code
         private const val DOTS_IN_DASH = 3
         private const val DOTS_IN_GAP = 1
         private const val DOTS_IN_LETTER_GAP = 3
         private const val DOTS_IN_WORD_GAP = 7
     }
 
+    /**
+     * Vibrates a message in Morse, stopping all previous vibrations.
+     * @param message the message to be vibrated in morse
+     */
     fun vibrate(message: Message) {
         vibrator.cancel()
-        val vibrations = convertToVibrations(message.sender, true)
+        val vibrations = convertToVibrations(message.contact.phoneNumber, true)
         vibrations.addAll(convertToVibrations(message.contents, false))
         vibrateMorse(vibrations)
     }
 
+    /**
+     * Stops vibrating all messages.
+     */
     fun stop() {
         vibrator.cancel()
     }

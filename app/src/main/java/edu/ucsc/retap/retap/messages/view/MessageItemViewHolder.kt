@@ -6,6 +6,9 @@ import android.widget.TextView
 import edu.ucsc.retap.retap.R
 import edu.ucsc.retap.retap.morse.MorseHelper
 
+/**
+ * Represents an item in the messages list.
+ */
 class MessageItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val senderTextView = itemView.findViewById<TextView>(R.id.sender)
     private val contentTextView = itemView.findViewById<TextView>(R.id.body)

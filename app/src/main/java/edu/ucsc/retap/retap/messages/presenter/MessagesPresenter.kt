@@ -1,36 +1,78 @@
 package edu.ucsc.retap.retap.messages.presenter
 
+import edu.ucsc.retap.retap.common.BasePresenter
+import edu.ucsc.retap.retap.common.Constants.IO_SCHEDULER
+import edu.ucsc.retap.retap.common.Constants.MAIN_SCHEDULER
+import edu.ucsc.retap.retap.common.di.ActivityScope
 import edu.ucsc.retap.retap.messages.adapter.MessagesAdapter
-import edu.ucsc.retap.retap.messages.interactor.MessagesInteractor
+import edu.ucsc.retap.retap.messages.data.MessagesSource
 import edu.ucsc.retap.retap.messages.view.MessagesViewModule
 import edu.ucsc.retap.retap.morse.MorseInteractor
-import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
+import javax.inject.Inject
+import javax.inject.Named
 
-class MessagesPresenter(
+/**
+ * Presenter for displaying a list of messages in a conversation. See MessagesActivity for more details.
+ */
+@ActivityScope
+class MessagesPresenter @Inject constructor(
         private val messagesViewModule: MessagesViewModule,
         private val messagesAdapter: MessagesAdapter,
-        private val messagesInteractor: MessagesInteractor,
-        private val morseInteractor: MorseInteractor) {
+        private val messagesSource: MessagesSource,
+        private val morseInteractor: MorseInteractor,
+        @Named(IO_SCHEDULER) private val ioScheduler: Scheduler,
+        @Named(MAIN_SCHEDULER) private val mainScheduler: Scheduler
+) : BasePresenter {
 
     private val compositeDisposable = CompositeDisposable()
 
-    fun loadMessages() {
-        messagesViewModule.showLoading()
+    override fun startPresenting() {
+        if (messagesAdapter.items.isEmpty()) {
+            messagesViewModule.showLoading()
+        }
+        loadMessages()
+        observeSourceChanges()
+        observeViewEvents()
+    }
+
+    override fun stopPresenting() {
+        compositeDisposable.clear()
+        morseInteractor.stop()
+    }
+
+    private fun loadMessages() {
         compositeDisposable.add(
-                messagesInteractor.getSMSMessages()
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
+                messagesSource.getMessages()
+                        .subscribeOn(ioScheduler)
+                        .observeOn(mainScheduler)
                         .doOnSuccess {
                             messagesAdapter.items = it
                             messagesViewModule.hideLoading()
                             it.firstOrNull() ?: return@doOnSuccess
-                            setItemIndex(0)
+                            if (messagesAdapter.selectedItemIndex < 0) {
+                                setItemIndex(0)
+                            }
                         }
                         .subscribe()
         )
+    }
 
+    private fun observeSourceChanges() {
+        compositeDisposable.add(
+                messagesSource.sourceChangedObservable()
+                        .subscribeOn(ioScheduler)
+                        .observeOn(mainScheduler)
+                        .doOnNext {
+                            morseInteractor.stop()
+                            loadMessages()
+                        }
+                        .subscribe()
+        )
+    }
+
+    private fun observeViewEvents() {
         compositeDisposable.add(
                 messagesAdapter.observeItemClick()
                         .doOnNext {
@@ -40,31 +82,22 @@ class MessagesPresenter(
         )
     }
 
-    fun onVolumeUp() {
+    override fun onVolumeUp() {
         val newIndex = maxOf(-1, messagesAdapter.selectedItemIndex - 1)
         setItemIndex(newIndex)
     }
 
-    fun onVolumeDown() {
+    override fun onVolumeDown() {
         val newIndex = minOf(messagesAdapter.items.size - 1, messagesAdapter.selectedItemIndex + 1)
-        setItemIndex(newIndex)
-    }
-
-    fun pauseVibration() {
-        setItemIndex(-1)
-        morseInteractor.stop()
+        setItemIndex(maxOf(0, newIndex))
     }
 
     private fun setItemIndex(index: Int) {
         if (index < 0) {
             morseInteractor.stop()
-        } else {
+        } else if (messagesAdapter.items.size > index) {
             morseInteractor.vibrate(messagesAdapter.items[index])
         }
         messagesAdapter.selectedItemIndex = index
-    }
-
-    fun cleanUp() {
-        compositeDisposable.clear()
     }
 }

@@ -5,29 +5,30 @@ import android.net.Uri
 import android.provider.ContactsContract
 import edu.ucsc.retap.retap.contacts.model.Contact
 
+/**
+ * Contains methods that facilitate getting Contacts.
+ */
 object ContactsHelper {
-    fun getContact(context: Context, number: String): Contact {
+
+    /**
+     * @param context the current context
+     * @param phoneNumber the user's phone number.
+     * @return a contact object given a user's phone number.
+     */
+    fun getContact(context: Context, phoneNumber: String): Contact {
         val contentResolver = context.contentResolver
+        val uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber))
+        val projection = arrayOf(ContactsContract.PhoneLookup.DISPLAY_NAME, ContactsContract.PhoneLookup._ID)
+        val cursor = contentResolver.query(uri, projection, null, null, null)
+
         var displayName: String? = null
-        val uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI,
-                Uri.encode(number))
-
-        val projection = arrayOf(ContactsContract.PhoneLookup.DISPLAY_NAME,
-                ContactsContract.PhoneLookup._ID)
-
-        val cursor = contentResolver.query(
-                uri,
-                projection, null, null, null)
-
         if (cursor != null) {
             while (cursor.moveToNext()) {
-                displayName = cursor
-                        .getString(cursor.getColumnIndexOrThrow(ContactsContract.PhoneLookup
-                                .DISPLAY_NAME))
+                displayName = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.PhoneLookup.DISPLAY_NAME))
             }
             cursor.close()
         }
 
-        return Contact(displayName)
+        return Contact(phoneNumber, displayName)
     }
 }

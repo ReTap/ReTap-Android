@@ -1,24 +1,29 @@
-package edu.ucsc.retap.retap.messages.interactor
+package edu.ucsc.retap.retap.messages.data
 
 import android.content.Context
 import android.net.Uri
 import edu.ucsc.retap.retap.contacts.interactor.ContactsHelper
 import edu.ucsc.retap.retap.contacts.model.Contact
 import edu.ucsc.retap.retap.messages.model.Message
+import io.reactivex.Observable
 import io.reactivex.Single
 
-class MessagesInteractor(private val context: Context) {
-    var filterByPhone: String? = null
-    private val senderPhoneNumberToContactMap = HashMap<String, Contact>()
-
+/**
+ * Exposes methods for fetching messages from the user's device.
+ */
+class SMSMessagesSource constructor(private val context: Context): MessagesSource {
     companion object {
         private const val SMS_CONTENT_RESOLVER_URI = "content://sms/inbox"
     }
 
+    var filterByPhone: String? = null
+    private val senderPhoneNumberToContactMap = HashMap<String, Contact>()
+
     /**
      * Messages take a long time to get. Do it async and off the main thread with an observable.
+     * @return the list of SMS messages on the user's device
      */
-    fun getSMSMessages(): Single<List<Message>> {
+    override fun getMessages(): Single<List<Message>> {
         return Single.fromCallable {
             val smsMessages = ArrayList<Message>()
 
@@ -27,7 +32,7 @@ class MessagesInteractor(private val context: Context) {
 
             cursor ?: throw(NullPointerException("Cursor should not be null"))
 
-            // Read the sms data and store it in the list
+            // Read the SMS data and store it in the list
             if (cursor.moveToFirst()) {
                 for (i in 0 until cursor.count) {
                     val sender = cursor.getString(cursor
@@ -39,8 +44,7 @@ class MessagesInteractor(private val context: Context) {
 
                     val contact = getContactForSender(sender)
                     val newMessage = Message(
-                            contact.displayName,
-                            sender,
+                            contact,
                             contents,
                             date.toLong()
                     )
@@ -51,12 +55,15 @@ class MessagesInteractor(private val context: Context) {
             cursor.close()
 
             return@fromCallable if (filterByPhone != null) {
-                smsMessages.filter { it.sender == filterByPhone }
+                smsMessages.filter { it.contact.phoneNumber == filterByPhone }
             } else {
                 smsMessages
             }
         }
     }
+
+    override fun sourceChangedObservable(): Observable<MessagesSource.Event> =
+            Observable.empty()
 
     private fun getContactForSender(sender: String): Contact {
         val contactFromCache = senderPhoneNumberToContactMap[sender]
