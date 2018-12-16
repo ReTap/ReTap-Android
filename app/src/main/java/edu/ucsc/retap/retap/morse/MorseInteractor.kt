@@ -76,7 +76,7 @@ class MorseInteractor @Inject constructor(
                         .split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         val vibrationObjects = ArrayList<Long>()
         val charset = if (isNumber && vibrateCounts) MorseHelper.CHARSET_COUNTS
-            else MorseHelper.CHARSET_MORSE
+        else MorseHelper.CHARSET_MORSE
         val lookups = if (isNumber && vibrateCounts) MorseHelper.COUNTS else MorseHelper.MORSE
 
         //Add initial pause

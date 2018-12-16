@@ -4,8 +4,8 @@ import android.app.Activity
 import android.content.Intent
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
-import edu.ucsc.retap.retap.common.di.ActivityScope
 import edu.ucsc.retap.retap.common.BasePresenter
+import edu.ucsc.retap.retap.common.di.ActivityScope
 import edu.ucsc.retap.retap.compose.view.ComposeViewModule
 import edu.ucsc.retap.retap.morse.MorseHelper
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -18,8 +18,8 @@ import javax.inject.Inject
  */
 @ActivityScope
 class ComposePresenter @Inject constructor(
-    activity: Activity,
-    private val viewModule: ComposeViewModule
+        activity: Activity,
+        private val viewModule: ComposeViewModule
 ) : BasePresenter {
 
     companion object {
@@ -34,12 +34,12 @@ class ComposePresenter @Inject constructor(
 
     override fun startPresenting() {
         eventDisposable.add(
-            viewModule
-                .observeEvents()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    handleViewEvent(it)
-                }
+                viewModule
+                        .observeEvents()
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe {
+                            handleViewEvent(it)
+                        }
         )
     }
 

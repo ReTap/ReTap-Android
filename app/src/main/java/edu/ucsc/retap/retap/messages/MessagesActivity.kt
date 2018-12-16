@@ -6,8 +6,8 @@ import edu.ucsc.retap.retap.R
 import edu.ucsc.retap.retap.common.App
 import edu.ucsc.retap.retap.common.BaseActivity
 import edu.ucsc.retap.retap.common.BasePresenter
-import edu.ucsc.retap.retap.messages.di.DaggerMessagesComponent
 import edu.ucsc.retap.retap.messages.data.SMSMessagesSource
+import edu.ucsc.retap.retap.messages.di.DaggerMessagesComponent
 import edu.ucsc.retap.retap.messages.presenter.MessagesPresenter
 import javax.inject.Inject
 

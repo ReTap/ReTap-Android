@@ -8,8 +8,8 @@ import edu.ucsc.retap.retap.common.App
 import edu.ucsc.retap.retap.common.BaseActivity
 import edu.ucsc.retap.retap.common.BasePresenter
 import edu.ucsc.retap.retap.inbox.presenter.InboxPresenter
-import edu.ucsc.retap.retap.messages.di.DaggerMessagesComponent
 import edu.ucsc.retap.retap.messages.data.SMSMessagesSource
+import edu.ucsc.retap.retap.messages.di.DaggerMessagesComponent
 import edu.ucsc.retap.retap.permissions.PermissionsInteractor
 import javax.inject.Inject
 

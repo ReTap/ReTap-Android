@@ -29,10 +29,10 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
+            android:background="?android:selectableItemBackgroundBorderless"
             android:contentDescription="@null"
             android:padding="@dimen/small_spacing"
-            android:background="?android:selectableItemBackgroundBorderless"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
     </RelativeLayout>
 

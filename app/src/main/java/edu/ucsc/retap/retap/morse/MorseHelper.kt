@@ -1,6 +1,7 @@
 package edu.ucsc.retap.retap.morse
 
 import android.content.Context
+import android.support.v4.content.res.ResourcesCompat
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
@@ -10,12 +11,12 @@ import edu.ucsc.retap.retap.R
 /**
  * Methods for converting between Morse and plaintext.
  */
-@Suppress("DEPRECATION")
 object MorseHelper {
     const val DOT = true
     const val DASH = false
     private const val DOT_STRING = "•"
     private const val DASH_STRING = "–"
+    private const val SPACE_STRING = " "
 
     //Character sets
     const val CHARSET_MORSE = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,?'!/()&:;=+-_\"$@"
@@ -189,14 +190,15 @@ object MorseHelper {
     fun appendMorse(dot: Boolean, context: Context, stringBuilder: SpannableStringBuilder) {
         val dotString = SpannableString(DOT_STRING)
         if (dot) {
-            val redSpan = ForegroundColorSpan(context.resources.getColor(R.color.blueColor))
-            dotString.setSpan(redSpan, 0, dotString.length, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
+            val blueColor = ResourcesCompat.getColor(context.resources, R.color.blueColor, null)
+            val blueSpan = ForegroundColorSpan(blueColor)
+            dotString.setSpan(blueSpan, 0, dotString.length, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
             stringBuilder.append(dotString)
         } else {
-            val blueSpan = ForegroundColorSpan(context.resources.getColor(R.color.redColor))
+            val redColor = ResourcesCompat.getColor(context.resources, R.color.redColor, null)
+            val redSpan = ForegroundColorSpan(redColor)
             val dashString = SpannableString(DASH_STRING)
-            dashString.setSpan(blueSpan, 0, dashString.length,
-                    Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
+            dashString.setSpan(redSpan, 0, dashString.length, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
             stringBuilder.append(dashString)
         }
     }
@@ -206,6 +208,6 @@ object MorseHelper {
      * @param stringBuilder the string buidler
      */
     fun appendSpace(stringBuilder: SpannableStringBuilder) {
-        stringBuilder.append(" ")
+        stringBuilder.append(SPACE_STRING)
     }
 }

@@ -18,7 +18,7 @@ import javax.inject.Inject
  *
  * Text will be converted into plain text before being sent.
  */
-class ComposeActivity: BaseActivity() {
+class ComposeActivity : BaseActivity() {
     // Dagger will automatically create everything with @Inject.
     @Inject lateinit var presenter: ComposePresenter
 
@@ -26,12 +26,12 @@ class ComposeActivity: BaseActivity() {
         super.onCreate(savedInstanceState)
 
         // Use Dagger to automatically create the presenter.
-        // Pass in components that aren't defined in  our project and add them to the Builder definition.
+        // Pass in components that aren't defined in our project and add them to the Builder definition.
         DaggerComposeComponent.builder()
-            .activity(this)
-            .rootView(findViewById(R.id.root))
-            .build()
-            .inject(this)
+                .activity(this)
+                .rootView(findViewById(R.id.root))
+                .build()
+                .inject(this)
     }
 
     override fun actionButtonDrawable(): Drawable? = resources.getDrawable(R.drawable.ic_share, null)

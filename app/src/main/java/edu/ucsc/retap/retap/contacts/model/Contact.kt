@@ -6,6 +6,6 @@ package edu.ucsc.retap.retap.contacts.model
  * @param displayName the contact's display name on the user's device
  */
 data class Contact(
-    val phoneNumber: String,
-    val displayName: String?
+        val phoneNumber: String,
+        val displayName: String?
 )

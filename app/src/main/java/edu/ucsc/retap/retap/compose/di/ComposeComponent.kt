@@ -21,8 +21,8 @@ interface ComposeComponent {
         fun activity(activity: Activity): Builder
 
         @BindsInstance
-        fun rootView(view: View) : Builder
+        fun rootView(view: View): Builder
 
-        fun build() : ComposeComponent
+        fun build(): ComposeComponent
     }
 }

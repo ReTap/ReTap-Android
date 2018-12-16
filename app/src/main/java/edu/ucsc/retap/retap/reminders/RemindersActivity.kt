@@ -47,9 +47,12 @@ class RemindersActivity : BaseActivity() {
                 .build()
                 .inject(this)
 
-        adapter.observeItemDoubleTap().doOnNext {
-            remindersRepository.deleteReminder(it)
-        }.subscribe()
+        adapter
+                .observeItemDoubleTap()
+                .doOnNext {
+                    remindersRepository.deleteReminder(it)
+                }
+                .subscribe()
     }
 
     @LayoutRes

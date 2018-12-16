@@ -1,6 +1,6 @@
 package edu.ucsc.retap.retap.messages.di
 
-import android.content.Context
+import android.app.Activity
 import android.os.Handler
 import android.os.Looper
 import android.support.annotation.LayoutRes
@@ -23,7 +23,7 @@ import javax.inject.Named
 /**
  * Module for providing dependencies to MessagesComponent.
  */
-@Module(includes = [MessagesBindingModule::class])
+@Module
 open class MessagesModule {
 
     @ActivityScope
@@ -34,8 +34,8 @@ open class MessagesModule {
 
     @ActivityScope
     @Provides
-    fun provideLayoutInflater(context: Context): LayoutInflater {
-        return LayoutInflater.from(context)
+    fun provideLayoutInflater(activity: Activity): LayoutInflater {
+        return LayoutInflater.from(activity)
     }
 
     @ActivityScope
@@ -55,14 +55,14 @@ open class MessagesModule {
     @ActivityScope
     @Provides
     fun provideAdapter(
-            context: Context,
+            activity: Activity,
             rootView: View,
             layoutInflater: LayoutInflater,
             @LayoutRes itemLayoutId: Int
     ): MessagesAdapter {
         val recyclerView = rootView.findViewById<RecyclerView>(R.id.messages_view)
         val adapter = MessagesAdapter(layoutInflater, itemLayoutId)
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.layoutManager = LinearLayoutManager(activity)
         recyclerView.adapter = adapter
         return adapter
     }

@@ -11,7 +11,7 @@ import io.reactivex.Single
 /**
  * Exposes methods for fetching messages from the user's device.
  */
-class SMSMessagesSource constructor(private val context: Context): MessagesSource {
+class SMSMessagesSource constructor(private val context: Context) : MessagesSource {
     companion object {
         private const val SMS_CONTENT_RESOLVER_URI = "content://sms/inbox"
     }

@@ -15,7 +15,7 @@ import javax.inject.Inject
  */
 @ActivityScope
 class ComposeViewModule @Inject constructor(
-    private val root: View
+        private val root: View
 ) {
     enum class Event {
         DOT_CLICK,

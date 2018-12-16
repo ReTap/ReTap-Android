@@ -38,7 +38,7 @@ abstract class BaseActivity : AppCompatActivity() {
         drawerLayout = findViewById(R.id.drawer_layout)
         LayoutInflater.from(this).inflate(layoutId(), findViewById(R.id.content_frame), true)
 
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         setUpToolbarAction()
         setUpToolbarText()

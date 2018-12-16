@@ -19,6 +19,7 @@ class MessagesViewModule @Inject constructor(rootView: View) {
         rootView.findViewById<ProgressBar>(R.id.progress_bar).indeterminateDrawable
                 .setColorFilter(progressBarTintColor, PorterDuff.Mode.SRC_IN)
     }
+
     fun showLoading() {
         loading.visibility = View.VISIBLE
     }

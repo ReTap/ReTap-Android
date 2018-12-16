@@ -15,7 +15,7 @@ import javax.inject.Inject
  */
 @ActivityScope
 class PermissionsInteractor @Inject constructor(
-    private val activity: Activity
+        private val activity: Activity
 ) {
     companion object {
         private const val SMS_PERMISSION_CODE = 1
@@ -32,11 +32,11 @@ class PermissionsInteractor @Inject constructor(
             permissionsGrantedEventSubject.onNext(Event.PERMISSIONS_GRANTED)
         } else {
             ActivityCompat.requestPermissions(activity,
-                arrayOf(
-                    Manifest.permission.READ_SMS,
-                    Manifest.permission.RECEIVE_SMS,
-                    Manifest.permission.READ_CONTACTS
-                ), SMS_PERMISSION_CODE
+                    arrayOf(
+                            Manifest.permission.READ_SMS,
+                            Manifest.permission.RECEIVE_SMS,
+                            Manifest.permission.READ_CONTACTS
+                    ), SMS_PERMISSION_CODE
             )
         }
     }
@@ -45,9 +45,9 @@ class PermissionsInteractor @Inject constructor(
         return ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_SMS) ==
                 PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(activity, Manifest.permission.RECEIVE_SMS) ==
-                PackageManager.PERMISSION_GRANTED &&
+                        PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_CONTACTS) ==
-                PackageManager.PERMISSION_GRANTED
+                        PackageManager.PERMISSION_GRANTED
     }
 
     fun onRequestPermissionsResult(
@@ -57,7 +57,7 @@ class PermissionsInteractor @Inject constructor(
         when (requestCode) {
             SMS_PERMISSION_CODE -> {
                 if (grantResults.isNotEmpty() &&
-                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     permissionsGrantedEventSubject.onNext(Event.PERMISSIONS_GRANTED)
                 }
                 return

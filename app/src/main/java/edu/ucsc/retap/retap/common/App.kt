@@ -11,6 +11,7 @@ class App : Application() {
     companion object {
         private lateinit var applicationComponent: ApplicationComponent
     }
+
     override fun onCreate() {
         super.onCreate()
         applicationComponent = DaggerApplicationComponent

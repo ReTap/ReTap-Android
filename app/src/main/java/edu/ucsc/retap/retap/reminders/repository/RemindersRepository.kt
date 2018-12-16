@@ -14,15 +14,18 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.subjects.PublishSubject
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 import javax.inject.Inject
+import kotlin.collections.ArrayList
+import kotlin.collections.List
+import kotlin.collections.forEach
 
 /**
  * Handles adding and removing reminders. Also includes functionality for persistence by storing the reminders as
  * JSON in shared preferences.
  */
 @ApplicationScope
-class RemindersRepository @Inject constructor(private val context: Context): MessagesSource {
+class RemindersRepository @Inject constructor(private val context: Context) : MessagesSource {
     companion object {
         private const val EMPTY_CONTACT_FIELD = ""
     }
@@ -78,7 +81,7 @@ class RemindersRepository @Inject constructor(private val context: Context): Mes
             messageArray.forEach {
                 messages.add(it)
             }
-        } catch (e : JsonSyntaxException) {
+        } catch (e: JsonSyntaxException) {
             return
         }
     }

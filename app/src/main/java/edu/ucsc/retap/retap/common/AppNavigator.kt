@@ -14,7 +14,7 @@ import javax.inject.Inject
  */
 @ApplicationScope
 class AppNavigator @Inject constructor(
-    context: Context
+        context: Context
 ) {
     private val contextRef = WeakReference(context)
 

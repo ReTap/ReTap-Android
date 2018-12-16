@@ -2,11 +2,11 @@ package edu.ucsc.retap.retap.inbox.presenter
 
 import android.app.Activity
 import android.os.Handler
-import edu.ucsc.retap.retap.common.di.ActivityScope
-import edu.ucsc.retap.retap.common.BasePresenter
 import edu.ucsc.retap.retap.common.AppNavigator
+import edu.ucsc.retap.retap.common.BasePresenter
 import edu.ucsc.retap.retap.common.Constants.IO_SCHEDULER
 import edu.ucsc.retap.retap.common.Constants.MAIN_SCHEDULER
+import edu.ucsc.retap.retap.common.di.ActivityScope
 import edu.ucsc.retap.retap.messages.adapter.MessagesAdapter
 import edu.ucsc.retap.retap.messages.data.MessagesSource
 import edu.ucsc.retap.retap.messages.model.Message
@@ -43,15 +43,15 @@ class InboxPresenter @Inject constructor(
         observeViewEvents()
         messageViewModule.showLoading()
         compositeDisposable.add(
-            permissionsInteractor
-                .observePermissionEvents()
-                .observeOn(mainScheduler)
-                .subscribe {
-                    if (!messagesAdapter.items.isEmpty()) {
-                        messageViewModule.hideLoading()
-                    }
-                    loadMessages()
-                }
+                permissionsInteractor
+                        .observePermissionEvents()
+                        .observeOn(mainScheduler)
+                        .subscribe {
+                            if (!messagesAdapter.items.isEmpty()) {
+                                messageViewModule.hideLoading()
+                            }
+                            loadMessages()
+                        }
         )
     }
 
@@ -75,30 +75,30 @@ class InboxPresenter @Inject constructor(
 
     private fun observeViewEvents() {
         compositeDisposable.add(
-            messagesAdapter.observeItemClick()
-                .doOnNext {
-                    setItemIndex(it)
-                    appNavigator.navigateToConversation(messagesAdapter.items[it].contact)
-                }
-                .subscribe()
+                messagesAdapter.observeItemClick()
+                        .doOnNext {
+                            setItemIndex(it)
+                            appNavigator.navigateToConversation(messagesAdapter.items[it].contact)
+                        }
+                        .subscribe()
         )
     }
 
     private fun loadMessages() {
         compositeDisposable.add(
-            messagesSource.getMessages()
-                .subscribeOn(ioScheduler)
-                .observeOn(mainScheduler)
-                .doOnSuccess {
-                    val items = it
-                        .distinctBy {
-                            it.contact.phoneNumber
-                        }
+                messagesSource.getMessages()
+                        .subscribeOn(ioScheduler)
+                        .observeOn(mainScheduler)
+                        .doOnSuccess {
+                            val items = it
+                                    .distinctBy {
+                                        it.contact.phoneNumber
+                                    }
 
-                    messagesAdapter.items = items
-                    messageViewModule.hideLoading()
-                }
-                .subscribe()
+                            messagesAdapter.items = items
+                            messageViewModule.hideLoading()
+                        }
+                        .subscribe()
         )
     }
 
@@ -110,9 +110,9 @@ class InboxPresenter @Inject constructor(
         mainThreadHandler.removeCallbacksAndMessages(null)
         val message = currentSelectedItem() ?: return
         mainThreadHandler.postDelayed({
-                appNavigator.navigateToConversation(message.contact)
-            },
-            AUTOMATICALLY_SELECT_DELAY_MS
+            appNavigator.navigateToConversation(message.contact)
+        },
+                AUTOMATICALLY_SELECT_DELAY_MS
         )
     }
 

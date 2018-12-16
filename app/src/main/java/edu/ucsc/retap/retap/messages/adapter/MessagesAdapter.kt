@@ -22,8 +22,8 @@ import javax.inject.Inject
  */
 @ActivityScope
 class MessagesAdapter @Inject constructor(
-    private val layoutInflater: LayoutInflater,
-    @LayoutRes private val messageLayoutId: Int
+        private val layoutInflater: LayoutInflater,
+        @LayoutRes private val messageLayoutId: Int
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
